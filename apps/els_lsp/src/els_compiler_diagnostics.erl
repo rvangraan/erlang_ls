@@ -824,7 +824,7 @@ load_dependency(Module, IncludingPath) ->
     {Old, Diagnostics}.
 
 -spec maybe_compile_and_load(uri(), [els_diagnostics:diagnostic()]) -> ok.
-maybe_compile_and_load(Uri, [] = _CDiagnostics) ->
+maybe_compile_and_load(Uri, _CDiagnostics) ->
     case els_config:get(code_reload) of
         #{"node" := NodeStr} ->
             Node = els_utils:compose_node_name(
@@ -838,9 +838,7 @@ maybe_compile_and_load(Uri, [] = _CDiagnostics) ->
             end;
         disabled ->
             ok
-    end;
-maybe_compile_and_load(_Uri, _CDiagnostics) ->
-    ok.
+    end.
 
 -spec handle_rpc_result(term() | {badrpc, term()}, atom()) -> ok.
 handle_rpc_result({ok, Module}, _) ->
