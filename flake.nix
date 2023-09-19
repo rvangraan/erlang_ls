@@ -6,17 +6,27 @@
   outputs = { self, nixpkgs, pinned-nixpkgs, flake-utils }:
     flake-utils.lib.eachDefaultSystem (system:
       let
-        pkgs = nixpkgs.legacyPackages.${system};
+      	pkgs = import nixpkgs {
+        	inherit system;
+        	config = {
+        	  	allowBroken = true;
+        	};
+      	};
+
         pinned-pkgs = pinned-nixpkgs.legacyPackages.${system};
+        erlpkgs = pinned-pkgs.beam.packages.erlangR23;
+        node = pkgs.nodejs-16_x;
       in
-      rec {
+      {
         devShell = pkgs.mkShell {
-          buildInputs = with pinned-pkgs.beam.packages.erlangR22; [
-            erlang
+          buildInputs = with erlpkgs; [
+            pkgs.act
             rebar3
-            erlang-ls
+            erlang
           ];
         };
       }
     );
 }
+
+
